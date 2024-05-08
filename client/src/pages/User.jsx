@@ -15,6 +15,8 @@ import { AuthContext } from '../context/AuthContext'
 
 const User = () => {
 	const { auth } = useContext(AuthContext)
+	const isUserAuthenticated = !!auth.token;
+    const authUserId = auth._id;
 	const [users, setUsers] = useState(null)
 	const [ticketsUser, setTicketsUser] = useState(null)
 	const [tickets, setTickets] = useState([])
@@ -28,6 +30,13 @@ const User = () => {
 		watch,
 		formState: { errors }
 	} = useForm()
+
+	useEffect(() => {
+        if (!isUserAuthenticated) {
+            // Redireccionar al usuario si no está autenticado
+            return <Redirect to="/login" />;
+        }
+    }, [isUserAuthenticated]);
 
 	const fetchUsers = async (data) => {
 		try {
@@ -147,8 +156,11 @@ const User = () => {
 						Accion
 					</p>
 					{users
-						?.filter((user) => user.username.toLowerCase().includes(watch('search')?.toLowerCase() || ''))
+						 ?.filter(user => user.username !== auth.username) // Filtrar para excluir al usuario actual
+						.filter(user => user.username.toLowerCase().includes(watch('search')?.toLowerCase() || ''))
 						.map((user, index) => {
+							const isCurrentUser = user._id === authUserId;
+							
 							return (
 								<Fragment key={index}>
 									<div className="border-t-2 border-indigo-200 px-2 py-1">{user.username}</div>
@@ -172,26 +184,31 @@ const User = () => {
 										</button>
 									</div>
 									<div className="flex gap-2 border-t-2 border-indigo-200 px-2 py-1">
-										{user.role === 'user' && (
-											<button
-												className="flex w-[115px] items-center justify-center gap-1 rounded bg-gradient-to-r from-indigo-600 to-blue-500 py-1 pl-2 pr-1.5 text-sm font-medium text-white hover:from-indigo-500 hover:to-blue-400 disabled:from-slate-500 disabled:to-slate-400"
-												onClick={() => onUpdateUser({ id: user._id, role: 'admin' })}
-												disabled={isUpdating}
-											>
-												Cambiar a Admin
-												<ChevronDoubleUpIcon className="h-5 w-5" />
-											</button>
-										)}
-										{user.role === 'admin' && (
-											<button
-												className="flex w-[115px] items-center justify-center gap-1 rounded bg-gradient-to-r from-indigo-600 to-blue-500 py-1 pl-2 pr-1.5 text-sm font-medium text-white hover:from-indigo-500 hover:to-blue-400 disabled:from-slate-500 disabled:to-slate-400"
-												onClick={() => onUpdateUser({ id: user._id, role: 'user' })}
-												disabled={isUpdating}
-											>
-												Cambiar a User
-												<ChevronDoubleDownIcon className="h-5 w-5" />
-											</button>
-										)}
+				
+									{!isCurrentUser && (
+										<>
+												{user.role === 'user' && (
+													<button
+														className="flex w-[115px] items-center justify-center gap-1 rounded bg-gradient-to-r from-indigo-600 to-blue-500 py-1 pl-2 pr-1.5 text-sm font-medium text-white hover:from-indigo-500 hover:to-blue-400 disabled:from-slate-500 disabled:to-slate-400"
+														onClick={() => onUpdateUser({ id: user._id, role: 'admin' })}
+														disabled={isUpdating}
+													>
+														Cambiar a Admin
+														<ChevronDoubleUpIcon className="h-5 w-5" />
+													</button>
+												)}
+												{user.role === 'admin' && (
+													<button
+														className="flex w-[115px] items-center justify-center gap-1 rounded bg-gradient-to-r from-indigo-600 to-blue-500 py-1 pl-2 pr-1.5 text-sm font-medium text-white hover:from-indigo-500 hover:to-blue-400 disabled:from-slate-500 disabled:to-slate-400"
+														onClick={() => onUpdateUser({ id: user._id, role: 'user' })}
+														disabled={isUpdating}
+													>
+														Cambiar a User
+														<ChevronDoubleDownIcon className="h-5 w-5" />
+													</button>
+												)}
+											</>
+									)}
 										<button
 											className="flex w-[115px] items-center justify-center gap-1 rounded bg-gradient-to-r from-red-700 to-rose-600 py-1 pl-2 pr-1.5 text-sm font-medium text-white hover:from-red-600 hover:to-rose-500 disabled:from-slate-500 disabled:to-slate-400"
 											onClick={() => handleDelete({ id: user._id, username: user.username })}

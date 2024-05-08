@@ -15,36 +15,42 @@ const AuthContextProvider = ({ children }) => {
 
 	const getUser = async () => {
 		try {
-			if (!auth.token) return
+			if (!auth.token) return;
 			const response = await axios.get('/auth/me', {
 				headers: {
 					Authorization: `Bearer ${auth.token}`
 				}
-			})
-
+			});
+	
 			const updatedAuth = {
 				...auth,
 				username: response.data.data.username,
 				email: response.data.data.email,
 				role: response.data.data.role
-			}
-
-			if (
-				updatedAuth.username !== auth.username ||
-				updatedAuth.email !== auth.email ||
-				updatedAuth.role !== auth.role
-			) {
-				setAuth(updatedAuth)
-			}
+			};
+	
+			setAuth(prevAuth => {
+				if (
+					updatedAuth.username !== prevAuth.username ||
+					updatedAuth.email !== prevAuth.email ||
+					updatedAuth.role !== prevAuth.role
+				) {
+					return updatedAuth;
+				} else {
+					return prevAuth; // No hay cambios, devuelve el estado anterior
+				}
+			});
 		} catch (error) {
-			console.error(error)
+			console.error(error);
 		}
-	}
+	};
 
 	useEffect(() => {
-		getUser()
-		localStorage.setItem('auth', JSON.stringify(auth))
-	}, [auth])
+		getUser(); // Llamar a getUser para obtener los datos del usuario
+	
+		// Guardar el estado actualizado en el almacenamiento local
+		localStorage.setItem('auth', JSON.stringify(auth));
+	}, [auth]); 
 
 	return <AuthContext.Provider value={{ auth, setAuth }}>{children}</AuthContext.Provider>
 }

@@ -13,6 +13,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import DateSelector from './DateSelector'
 import Sala from './Sala.jsx'
 
+
 const SalaListsByTeatro = ({ teatros, selectedTeatroIndex, setSelectedTeatroIndex, fetchTeatros, auth }) => {
 	const {
 		register,
@@ -111,7 +112,7 @@ const SalaListsByTeatro = ({ teatros, selectedTeatroIndex, setSelectedTeatroInde
 			)
 			fetchTeatros()
 			// console.log(response.data)
-			toast.success('Add sala successful!', {
+			toast.success('se agrego la sala correctamente!', {
 				position: 'top-center',
 				autoClose: 2000,
 				pauseOnHover: false
@@ -179,7 +180,7 @@ const SalaListsByTeatro = ({ teatros, selectedTeatroIndex, setSelectedTeatroInde
 			)
 			// console.log(response.data)
 			fetchTeatros(data.name)
-			toast.success('Editadonombre Teatro successful!', {
+			toast.success('Nombre del Teatro editado correctamente!', {
 				position: 'top-center',
 				autoClose: 2000,
 				pauseOnHover: false

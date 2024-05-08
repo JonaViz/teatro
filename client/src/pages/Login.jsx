@@ -65,6 +65,7 @@ const Login = () => {
               type="primary"
               htmlType="submit"
               className="w-full"
+              style={{ backgroundColor: '#318CE7' }}
               loading={isLoggingIn}
               disabled={isLoggingIn}
             >

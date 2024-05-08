@@ -127,7 +127,7 @@ const PaymentForm = () => {
                         <br />
                         <button
                             type="button"
-                            className="btn btn-success btn-block btn-lg"
+                            className="flex w-fit items-center gap-1 mx-auto block rounded-md bg-gradient-to-r from-indigo-600 to-blue-500 py-2 px-4 text-lg font-medium text-white hover:from-indigo-500 hover:to-blue-400 disabled:from-slate-500 disabled:to-slate-400"
                             onClick={submitPayment} style={{ textAlign: 'center' }}
                         >Pagar</button>
                     </form>
