@@ -148,7 +148,7 @@ exports.compra = async (req, res, next) => {
 		const { seats } = req.body
 		const user = req.user
 
-		const espectaculo = await Espectaculo.findById(req.params.id).populate({ path: 'sala', select: 'seatPlan', select: 'precio'})
+		const espectaculo = await Espectaculo.findById(req.params.id).populate({ path: 'sala', select: 'seatPlan'})
 
 		if (!espectaculo) {
 			return res.status(400).json({ success: false, message: `Espectaculo not found with id of ${req.params.id}` })
