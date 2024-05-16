@@ -58,8 +58,7 @@ const Compra = () => {
 						<p className="font-semibold"> Butacas seleccionadas : </p>
 						<p className="text-start">{selectedSeats.join(', ')}</p>
 						{!!selectedSeats.length && <p className="whitespace-nowrap">({selectedSeats.length} butacas)</p>}
-						<p className="font-semibold">Precio de las butacas = $5000</p>
-						<p className="font-semibold">precio final = ${selectedSeats.length*5000}  </p>
+						
 					</div>
 					
 
