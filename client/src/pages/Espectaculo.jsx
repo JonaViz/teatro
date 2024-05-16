@@ -17,6 +17,7 @@ const Espectaculo = () => {
 	const [selectedSeats, setSelectedSeats] = useState([])
 	const [filterRow, setFilterRow] = useState(null)
 	const [filterColumn, setFilterColumn] = useState(null)
+	const [precio, setPrecio] = useState(0) //agregado
 	const sortedSelectedSeat = selectedSeats.sort((a, b) => {
 		const [rowA, numberA] = a.match(/([A-Za-z]+)(\d+)/).slice(1)
 		const [rowB, numberB] = b.match(/([A-Za-z]+)(\d+)/).slice(1)
@@ -36,6 +37,8 @@ const Espectaculo = () => {
 		return -1
 	})
 
+	
+
 	const fetchEspectaculo = async (data) => {
 		try {
 			let response
@@ -47,10 +50,16 @@ const Espectaculo = () => {
 				})
 			} else {
 				response = await axios.get(`/espectaculo/${id}`)
+				
 			}
-			// console.log(response.data.data)
+			
 			setEspectaculo(response.data.data)
+			
+		
+			setPrecio(response.data.data.sala.precio)// agregado
+			
 		} catch (error) {
+
 			console.error(error)
 			toast.error(error.response.data.message || 'Error', {
 				position: 'top-center',
@@ -63,6 +72,11 @@ const Espectaculo = () => {
 	useEffect(() => {
 		fetchEspectaculo()
 	}, [])
+
+
+	
+
+
 
 	const row = espectaculo?.sala?.seatPlan?.row
 	let rowLetters = []
@@ -93,6 +107,81 @@ const Espectaculo = () => {
 		)
 	})
 
+	const sectionPriceFactors = {
+		"Palcos altos": 1.2, // 20% más caro que el precio base
+		"Palcos VIP": 1.5, // 50% más caro que el precio base
+		"Platea VIP": 2.0, // 100% más caro que el precio base
+		"Super Pullman": 1.0 // mismo precio que el base
+	};
+	
+	  
+	const sectionColors = {
+		"Palcos altos": "lightcoral",
+		"Palcos VIP": "lightgreen",
+		"Platea VIP": "lightblue",
+		"Super Pullman": "#8a2be2"
+	  };
+	  
+	  const getSection = (rowIndex, col, totalCols, totalRows) => {
+		const colPerSection = Math.floor(totalCols / 3); 
+		const remainingCols = totalCols % 3; 
+	  
+		
+		const colOffsetPlateaVIP = colPerSection * 2 + (remainingCols > 0 ? remainingCols : 0);
+	  
+		
+		let pullmanRows = Math.floor(totalRows / 2); 
+		if (totalRows % 2 !== 0) pullmanRows++; 
+		if (rowIndex < pullmanRows) { 
+			if (col < colPerSection+1) return "Palcos VIP";
+			if (col < colOffsetPlateaVIP+1) return "Platea VIP";
+			return "Palcos altos";
+		} else { 
+			return "Super Pullman";
+		}
+	  };
+
+	  
+
+	  const calculatePrice = (seat) => {
+		const rowIndex = rowLetters.indexOf(seat.row);
+		const totalCols = colNumber.length;
+		const totalRows = rowLetters.length;
+		const colPerSection = Math.floor(totalCols / 3); 
+		const remainingCols = totalCols % 3; 
+		
+		const colOffsetPlateaVIP = colPerSection * 2 + (remainingCols > 0 ? remainingCols : 0);
+		
+		let pullmanRows = Math.floor(totalRows / 2); 
+		if (totalRows % 2 !== 0) pullmanRows++; 
+		
+		let section;
+		if (rowIndex < pullmanRows) { 
+			if (seat.number <= colPerSection) section = "Palcos VIP";
+			else if (seat.number <= colOffsetPlateaVIP) section = "Platea VIP";
+			else section = "Palcos altos";
+		} else if (rowIndex === pullmanRows && seat.number <= colPerSection) {
+			section = "Palcos VIP";
+		} else { 
+			section = "Super Pullman";
+		}
+	
+		const factor = sectionPriceFactors[section];
+		const basePrice = precio;
+		
+		if (factor !== undefined) {
+			return basePrice * factor;
+		} else {
+			// Si no hay un factor definido para la sección, simplemente retornamos el precio base
+			return basePrice;
+		}
+	};
+	
+	const totalPrice = selectedSeats.reduce((total, seat) => total + calculatePrice(seat), 0);
+
+	
+
+	  
 	return (
 		<div className="flex min-h-screen flex-col gap-4 bg-gradient-to-br from-indigo-900 to-blue-500 pb-8 sm:gap-8">
 			<Navbar />
@@ -107,6 +196,15 @@ const Espectaculo = () => {
 								{!!selectedSeats.length && (
 									<p className="whitespace-nowrap">({selectedSeats.length} butacas)</p>
 								)}
+
+{!!selectedSeats.length && (
+									<p className="whitespace-nowrap">Precio total: ${totalPrice.toFixed(2)}</p>
+								)}
+
+
+
+
+
 							</div>
 
 							{!!selectedSeats.length && (
@@ -114,7 +212,8 @@ const Espectaculo = () => {
 									to={auth.role ? `/compra/${id}` : '/login'}
 									state={{
 										selectedSeats: sortedSelectedSeat,
-										espectaculo
+										espectaculo,
+										totalPrice: selectedSeats.reduce((total, seat) => total + calculatePrice(seat), 0) // Calcular precio total
 									}}
 									className="flex items-center justify-center gap-2 rounded-b-lg bg-gradient-to-br from-indigo-600 to-blue-500 px-4 py-1 font-semibold text-white hover:from-indigo-500 hover:to-blue-500 md:rounded-none md:rounded-br-lg"
 								>
@@ -126,56 +225,65 @@ const Espectaculo = () => {
 
 						<div className="mx-auto mt-4 flex flex-col items-center rounded-lg bg-gradient-to-br from-indigo-100 to-white p-4 text-center drop-shadow-lg">
 							<div className="w-full rounded-lg bg-white">
+							<div>
 								<div className="bg-gradient-to-r from-indigo-800 to-blue-700 bg-clip-text text-xl font-bold text-transparent">
 									Escenario
 								</div>
-							</div>
-							<div className="flex w-full flex-col overflow-x-auto overflow-y-hidden">
-								<div className="m-auto my-2">
-									<div className="flex flex-col">
-										<div className="flex items-center">
-											<div className="flex h-8 w-8 items-center">
-												<p className="w-8"></p>
-											</div>
-											{colNumber.map((col, index) => {
-												return (
+								<div className="flex w-full flex-col overflow-x-auto overflow-y-hidden">
+									<div className="m-auto my-2">
+										<div className="flex flex-col">
+											<div className="flex items-center">
+												<div className="flex h-8 w-8 items-center">
+													<p className="w-8"></p>
+												</div>
+												{colNumber.map((col, index) => (
 													<div key={index} className="flex h-8 w-8 items-center">
 														<p className="w-8 font-semibold">{col}</p>
 													</div>
-												)
-											})}
-										</div>
-										{rowLetters.reverse().map((rowLetter, index) => {
-											return (
-												<div key={index} className="flex">
+												))}
+											</div>
+											{rowLetters.map((rowLetter, rowIndex) => (
+												<div key={rowIndex} className="flex">
 													<div className="flex h-8 w-8 items-center">
 														<p className="w-8 text-xl font-semibold">{rowLetter}</p>
 													</div>
-													{colNumber.map((col, index) => {
+													{colNumber.map((col, colIndex) => {
+														const section = getSection(rowIndex, col, colNumber.length, rowLetters.length);
+														const cellStyle = {
+															backgroundColor: sectionColors[section],
+														};
 														return (
-															<Seat
-																key={index}
-																seat={{ row: rowLetter, number: col }}
-																setSelectedSeats={setSelectedSeats}
-																selectable={!isPast}
-																isAvailable={
-																	!espectaculo.seats.find(
-																		(seat) =>
-																			seat.row === rowLetter &&
-																			seat.number === col
-																	)
-																}
-															/>
-														)
+															<div key={colIndex} className="flex h-8 w-8 items-center" style={cellStyle}>
+																<Seat
+																	seat={{ row: rowLetter, number: col }}
+																	setSelectedSeats={setSelectedSeats}
+																	selectable={!isPast}
+																	isAvailable={
+																		!espectaculo.seats.find(
+																			(seat) =>
+																				seat.row === rowLetter && seat.number === col
+																		)
+																	}
+																/>
+															</div>
+														);
 													})}
 													<div className="flex h-8 w-8 items-center">
 														<p className="w-8 text-xl font-semibold">{rowLetter}</p>
 													</div>
 												</div>
-											)
-										})}
+											))}
+										</div>
 									</div>
 								</div>
+								<div className="flex justify-around">
+									{Object.entries(sectionColors).map(([section, color]) => (
+										<div key={section} style={{ color }} className="font-bold">
+											{section}
+										</div>
+									))}
+								</div>
+							</div>
 							</div>
 						</div>
 						{auth.role === 'admin' && (

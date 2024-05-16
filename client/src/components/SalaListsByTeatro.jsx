@@ -102,7 +102,8 @@ const SalaListsByTeatro = ({ teatros, selectedTeatroIndex, setSelectedTeatroInde
 					teatro: teatros[selectedTeatroIndex]._id,
 					number: teatros[selectedTeatroIndex].salas.length + 1,
 					row: data.row.toUpperCase(),
-					column: data.column
+					column: data.column,
+					precio: data.precio,
 				},
 				{
 					headers: {
@@ -262,6 +263,20 @@ const SalaListsByTeatro = ({ teatros, selectedTeatroIndex, setSelectedTeatroInde
 					{auth.role === 'admin' && (
 						<div className="flex w-full flex-wrap justify-between gap-4 rounded-md bg-gradient-to-br from-indigo-100 to-white p-4">
 							<h3 className="flex items-center text-xl font-bold">Agregar Sala</h3>
+							<div className="flex items-center gap-4"> 
+								<label className="text-lg font-semibold leading-5">          Precio de Pullman:</label>
+								<input
+									title={errors.precio ? errors.precio.message : 'Precio de la sala'}
+									type="number"
+									min="0"
+									step="any"
+									required
+									className={`w-15 rounded px-3 py-1 text-2xl font-semibold drop-shadow-sm leading-3 ${
+									errors.precio && 'border-2 border-red-500'
+									}`}
+									{...register('precio', { required: true })}
+								/>
+								</div>
 							<div className="flex grow flex-col gap-4 sm:justify-end md:flex-row">
 								<div className="flex flex-wrap justify-end gap-4">
 									<div className="flex flex-wrap gap-2">

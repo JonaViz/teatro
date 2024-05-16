@@ -4,6 +4,7 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
+import authService from '../Services/authService';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -13,7 +14,9 @@ const Login = () => {
   const onFinish = async (values) => {
     setIsLoggingIn(true);
     try {
+      //const response = await authService.login(values);
       const response = await axios.post('/auth/login', values);
+      
       // console.log(response.data);
       notification.success({
         message: 'Login successful!',

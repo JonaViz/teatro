@@ -12,8 +12,10 @@ const salaSchema = new mongoose.Schema({
 		column: {
 			type: Number,
 			required: [true, 'Please add a seatPlan column']
-		}
+		},
+		
 	},
+	precio:{type:Number, required: false},
 	espectaculos: [{ type: mongoose.Schema.ObjectId, ref: 'Espectaculo' }]
 })
 

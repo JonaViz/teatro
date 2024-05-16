@@ -55,12 +55,11 @@ const Compra = () => {
 				<EspecaculoDetails espectaculo={espectaculo} />
 				<div className="flex flex-col justify-between rounded-b-lg bg-gradient-to-br from-indigo-100 to-white text-center text-lg drop-shadow-lg md:flex-row">
 					<div className="flex flex-col items-center gap-x-4 px-4 py-2 md:flex-row">
-						<p className="font-semibold">Selecciona tus Butacas : </p>
+						<p className="font-semibold"> Butacas seleccionadas : </p>
 						<p className="text-start">{selectedSeats.join(', ')}</p>
 						{!!selectedSeats.length && <p className="whitespace-nowrap">({selectedSeats.length} butacas)</p>}
 						<p className="font-semibold">Precio de las butacas = $5000</p>
 						<p className="font-semibold">precio final = ${selectedSeats.length*5000}  </p>
-
 					</div>
 					
 

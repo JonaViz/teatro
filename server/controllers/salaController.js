@@ -11,6 +11,7 @@ exports.getSalas = async (req, res, next) => {
 				{ path: 'espectaculos', select: 'obra espectaculo isRelease' },
 				{ path: 'teatro', select: 'name' }
 			])
+		//	.select('number seatPlan precio')
 			.then((salas) => {
 				salas.forEach((sala) => {
 					sala.espectaculos = sala.espectaculos.filter((espectaculo) => espectaculo.isRelease)
@@ -34,6 +35,7 @@ exports.getSala = async (req, res, next) => {
 				{ path: 'espectaculos', select: 'obra espectaculo isRelease' },
 				{ path: 'teatro', select: 'name' }
 			])
+			//.select('number seatPlan precio') 
 			.then((sala) => {
 				sala.espectaculos = sala.espectaculos.filter((espectaculo) => espectaculo.isRelease)
 				return sala
@@ -153,7 +155,7 @@ exports.getUnreleasedSalaByObra = async (req, res, next) => {
 //@access   Private
 exports.createSala = async (req, res, next) => {
 	try {
-		const { teatro: teatroId, row, column } = req.body
+		const { teatro: teatroId, row, column, precio } = req.body
 		const rowRegex = /^([A-D][A-Z]|[A-Z])$/
 		if (!rowRegex.test(row)) {
 			return res.status(400).json({ success: false, message: `Row is not a valid letter between A to CZ` })
@@ -169,7 +171,7 @@ exports.createSala = async (req, res, next) => {
 			return res.status(400).json({ success: false, message: `teatro not found with id of ${teatroId}` })
 		}
 
-		const sala = await Sala.create({ teatro, number: teatro.salas.length + 1, seatPlan: { row, column } })
+		const sala = await Sala.create({ teatro, number: teatro.salas.length + 1, seatPlan: { row, column }, precio })
 
 		teatro.salas.push(sala._id)
 

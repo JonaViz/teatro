@@ -8,6 +8,7 @@ const espectaculoSchema = new mongoose.Schema({
 		{
 			row: { type: String, required: [true, 'Please add a seat row'] },
 			number: { type: Number, required: [true, 'Please add a seat number'] },
+			
 			user: { type: mongoose.Schema.ObjectId, ref: 'User' }
 		}
 	],

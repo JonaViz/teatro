@@ -11,7 +11,7 @@ exports.getEspectaculos = async (req, res, next) => {
 		const espectaculos = await Espectaculo.find({ isRelease: true })
 			.populate([
 				'obra',
-				{ path: 'sala', populate: { path: 'teatro', select: 'name' }, select: 'number teatro seatPlan' }
+				{ path: 'sala', populate: { path: 'teatro', select: 'name' }, select: 'number teatro seatPlan precio'}
 			])
 			.select('-seats.user -seats.row -seats.number')
 
@@ -30,7 +30,7 @@ exports.getUnreleasedEspectaculos = async (req, res, next) => {
 		const espectaculos = await Espectaculo.find()
 			.populate([
 				'obra',
-				{ path: 'sala', populate: { path: 'teatro', select: 'name' }, select: 'number teatro seatPlan' }
+				{ path: 'sala', populate: { path: 'teatro', select: 'name' }, select: 'number teatro seatPlan precio' }
 			])
 			.select('-seats.user -seats.row -seats.number')
 
@@ -49,7 +49,9 @@ exports.getEspectaculo = async (req, res, next) => {
 		const espectaculo = await Espectaculo.findById(req.params.id)
 			.populate([
 				'obra',
-				{ path: 'sala', populate: { path: 'teatro', select: 'name' }, select: 'number teatro seatPlan' }
+				{ path: 'sala', 
+				populate: { path: 'teatro', select: 'name' }
+				, select: 'number teatro seatPlan precio' }
 			])
 			.select('-seats.user')
 
@@ -75,7 +77,7 @@ exports.getEspectaculoWithUser = async (req, res, next) => {
 	try {
 		const espectaculo = await Espectaculo.findById(req.params.id).populate([
 			'obra',
-			{ path: 'sala', populate: { path: 'teatro', select: 'name' }, select: 'number teatro seatPlan' },
+			{ path: 'sala', populate: { path: 'teatro', select: 'name' }, select: 'number teatro seatPlan precio' },
 			{ path: 'seats', populate: { path: 'user', select: 'username email role' } }
 		])
 
@@ -146,7 +148,7 @@ exports.compra = async (req, res, next) => {
 		const { seats } = req.body
 		const user = req.user
 
-		const espectaculo = await Espectaculo.findById(req.params.id).populate({ path: 'sala', select: 'seatPlan' })
+		const espectaculo = await Espectaculo.findById(req.params.id).populate({ path: 'sala', select: 'seatPlan', select: 'precio'})
 
 		if (!espectaculo) {
 			return res.status(400).json({ success: false, message: `Espectaculo not found with id of ${req.params.id}` })
@@ -160,8 +162,9 @@ exports.compra = async (req, res, next) => {
 			if (maxRow.length !== row.length) {
 				return maxRow.length > row.length
 			}
-
+			
 			return maxRow.localeCompare(row) >= 0 && number <= maxCol
+			
 		})
 
 		if (!isSeatValid) {
