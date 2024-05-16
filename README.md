@@ -1,10 +1,10 @@
 
 ```
 ```
-Descargar el codigo
+Clonar el proyecto
 Crear el archivo .env en la carpeta /server
 ```
-ejemplo de la configuracion del archivo .env
+archivo .env
 PORT=8080
 DATABASE=mongodb://127.0.0.1:27017/
 JWT_SECRET=mongodb://user:password@127.0.0.1:27017/
