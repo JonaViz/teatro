@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@ant-design/icons": "^5.2.6",
+    "@ant-design/icons": "^5.3.7",
     "@heroicons/react": "^2.0.18",
     "@vitejs/plugin-react": "^4.2.0",
     "antd": "^5.11.5",
