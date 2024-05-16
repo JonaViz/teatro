@@ -21,6 +21,8 @@ const Espectaculo = () => {
 	const sortedSelectedSeat = selectedSeats.sort((a, b) => {
 		const [rowA, numberA] = a.match(/([A-Za-z]+)(\d+)/).slice(1)
 		const [rowB, numberB] = b.match(/([A-Za-z]+)(\d+)/).slice(1)
+		console.log(rowA,numberA)
+
 		if (rowA === rowB) {
 			if (parseInt(numberA) > parseInt(numberB)) {
 				return 1
@@ -114,6 +116,7 @@ const Espectaculo = () => {
 		"Super Pullman": 1.0 // mismo precio que el base
 	};
 	
+	
 	  
 	const sectionColors = {
 		"Palcos altos": "lightcoral",
@@ -132,6 +135,7 @@ const Espectaculo = () => {
 		
 		let pullmanRows = Math.floor(totalRows / 2); 
 		if (totalRows % 2 !== 0) pullmanRows++; 
+
 		if (rowIndex < pullmanRows) { 
 			if (col < colPerSection+1) return "Palcos VIP";
 			if (col < colOffsetPlateaVIP+1) return "Platea VIP";
@@ -193,15 +197,16 @@ const Espectaculo = () => {
 							<div className="flex flex-col items-center gap-x-4 px-4 py-2 md:flex-row">
 								{!isPast && <p className="font-semibold">Elige tus butacas : </p>}
 								<p className="text-start">{sortedSelectedSeat.join(', ')}</p>
+								
 								{!!selectedSeats.length && (
 									<p className="whitespace-nowrap">({selectedSeats.length} butacas)</p>
 								)}
 
-{!!selectedSeats.length && (
+								{!!selectedSeats.length && (
 									<p className="whitespace-nowrap">Precio total: ${totalPrice.toFixed(2)}</p>
 								)}
 
-
+								
 
 
 
@@ -251,7 +256,9 @@ const Espectaculo = () => {
 														const section = getSection(rowIndex, col, colNumber.length, rowLetters.length);
 														const cellStyle = {
 															backgroundColor: sectionColors[section],
+
 														};
+													
 														return (
 															<div key={colIndex} className="flex h-8 w-8 items-center" style={cellStyle}>
 																<Seat

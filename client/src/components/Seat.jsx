@@ -17,6 +17,7 @@ const Seat = ({ seat, setSelectedSeats, selectable, isAvailable }) => {
 			onClick={() => {
 				setIsSelected(false)
 				setSelectedSeats((prev) => prev.filter((e) => e !== `${seat.row}${seat.number}`))
+				
 			}}
 		>
 			<div className="flex h-6 w-6 items-center justify-center rounded bg-blue-500 drop-shadow-md">
@@ -31,6 +32,7 @@ const Seat = ({ seat, setSelectedSeats, selectable, isAvailable }) => {
 				if (selectable) {
 					setIsSelected(true)
 					setSelectedSeats((prev) => [...prev, `${seat.row}${seat.number}`])
+					
 				}
 			}}
 		>
