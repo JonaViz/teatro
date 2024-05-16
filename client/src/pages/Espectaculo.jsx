@@ -110,7 +110,7 @@ const Espectaculo = () => {
 	})
 
 	const sectionPriceFactors = {
-		"Palcos altos": 1.2, // 20% más caro que el precio base
+		"Palcos altos": 1, // 20% más caro que el precio base
 		"Palcos VIP": 1.5, // 50% más caro que el precio base
 		"Platea VIP": 2.0, // 100% más caro que el precio base
 		"Super Pullman": 1.0 // mismo precio que el base
